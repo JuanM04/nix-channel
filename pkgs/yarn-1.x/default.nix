@@ -8,7 +8,7 @@ pkgs.stdenv.mkDerivation rec {
     sha512 = "/0V5q0WbslqnwP91tirOvldvYISzaqhClxzyUKXYxs07yUILIs5jx/k6CFe8bvKSkds5w+eiOqta39Wk3WxdcQ==";
   };
   doCheck = true;
-  phases = "installPhase";
+  phases = [ "unpackPhase" "installPhase" ];
   installPhase = ''
     mkdir $out
     cp -r * $out
