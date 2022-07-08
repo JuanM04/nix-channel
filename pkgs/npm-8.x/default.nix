@@ -14,4 +14,5 @@ pkgs.stdenv.mkDerivation rec {
     cp -r * $out
     chmod +x $out/bin/{npm,npx,node-gyp-bin/node-gyp}
   '';
+  meta.priority = "100"; # Prevents collision with Node's built-in npm
 }
