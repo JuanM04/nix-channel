@@ -1,0 +1,23 @@
+name: Autoupdate
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    
+
+jobs:
+  autoupdate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - name: Run scripts
+        run: ./scripts/updateAll.sh
+      - name: Commit
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: 'pkgs'
+          message: 'updated packages'
