@@ -1,4 +1,4 @@
-import * as semver from "https://deno.land/x/semver@v1.4.0/mod.ts";
+import { maxSatisfying } from "https://deno.land/x/semver@v1.4.0/mod.ts";
 
 type Versions = Record<
   string,
@@ -15,21 +15,17 @@ export async function getLatestVersion(packageName: string, condition: string) {
     `https://registry.npmjs.org/${packageName}`
   ).then((res) => res.json());
   const versions = registry.versions as Versions;
-  const sortedVersions = Object.keys(versions).sort((a, b) =>
-    semver.gt(a, b) ? -1 : 1
-  );
+  const latest = maxSatisfying(Object.keys(versions), condition);
 
-  for (const version of sortedVersions) {
-    if (semver.satisfies(version, condition)) {
-      return {
-        version,
-        url: versions[version].dist.tarball,
-        sha512: versions[version].dist.integrity.slice("sha512-".length),
-      };
-    }
+  if (!latest) {
+    throw new Error(
+      `Couldn't find a version of ${packageName} that satisfies ${condition}`
+    );
   }
 
-  throw new Error(
-    `Couldn't find a version of ${packageName} that satisfies ${condition}`
-  );
+  return {
+    version: latest,
+    url: versions[latest].dist.tarball,
+    sha512: versions[latest].dist.integrity.slice("sha512-".length),
+  };
 }
